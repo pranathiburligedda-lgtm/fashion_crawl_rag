@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>trendDesk AI - Perplexity Clone</title>
+    <meta name="description" content="trendDesk AI - A premium AI-powered chat assistant.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+    <!-- Hidden File Input for PDF Upload -->
+    <input type="file" id="pdf-upload" accept=".pdf" style="display: none;">
+
+    <!-- Landing / Home View -->
+    <div id="home-view" class="home-view">
+        <div class="container bounce-in">
+            <h1 class="logo">trendDesk AI</h1>
+
+            <!-- Search Input Section -->
+            <div class="search-container" id="search-container">
+                <div class="search-input-wrapper">
+                    <input type="text" class="search-input" id="main-input" placeholder="Ask me anything..." autofocus>
+                </div>
+
+                <div class="search-controls">
+                    <div class="controls-left">
+                        <button class="btn-circle" id="home-attach-btn" title="Attach PDF">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        </button>
+                        <span id="home-upload-status" class="upload-badge hidden"></span>
+                        <button class="pill-button dashed" title="Computer">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                            Computer +
+                        </button>
+                    </div>
+
+                    <div class="controls-right">
+                        <select id="home-persona" class="styled-select">
+                            <option value="Assistant">Assistant</option>
+                            <option value="Teacher">Teacher</option>
+                            <option value="Coder">Coder</option>
+                        </select>
+                        <select id="home-lang" class="styled-select">
+                            <option value="English">English</option>
+                            <option value="Spanish">Spanish</option>
+                            <option value="French">French</option>
+                            <option value="German">German</option>
+                        </select>
+                        <div class="btn-mic" id="home-mic" title="Microphone">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                        </div>
+                        <button class="btn-submit" id="home-submit" title="Send">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Suggestion Card Section -->
+            <div class="suggestion-card-wrapper fade-up">
+                <div class="suggestion-card">
+                    <div class="card-header">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                        Try Asking
+                    </div>
+
+                    <div class="tag-cloud">
+                        <div class="tag active" data-category="recruiting">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;margin-right:4px;display:inline-block;vertical-align:middle;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            Recruiting
+                        </div>
+                        <div class="tag" data-category="organise">Organise my life</div>
+                        <div class="tag" data-category="monitor">Monitor the situation</div>
+                        <div class="tag" data-category="prototype">Create a prototype</div>
+                    </div>
+
+                    <div class="suggestion-list" id="suggestion-list">
+                        <div class="suggestion-item" data-prompt="Monitor job postings at target companies">Monitor job postings at target companies</div>
+                        <div class="suggestion-item" data-prompt="Build interactive talent market map">Build interactive talent market map</div>
+                        <div class="suggestion-item" data-prompt="Benchmark salary for a role">Benchmark salary for a role</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat View -->
+    <div id="chat-view" class="chat-view hidden">
+        <div class="chat-header">
+            <button class="back-btn" id="back-btn" title="New Chat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                <span class="logo-small">trendDesk AI</span>
+            </button>
+            <div style="flex: 1;"></div>
+            <span id="chat-upload-status" class="upload-badge hidden"></span>
+            
+            <button class="clear-btn" id="share-btn" title="Copy Link" style="margin-left: 12px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                Share
+            </button>
+            <button class="clear-btn" id="export-btn" title="Download PDF" style="margin-left: 12px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Export
+            </button>
+            <button class="clear-btn" id="clear-btn" title="Clear Chat" style="margin-left: 12px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14H6L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M9 6V4h6v2"></path></svg>
+                Clear
+            </button>
+        </div>
+
+        <div class="chat-messages" id="chat-messages"></div>
+
+        <div class="chat-input-area">
+            <div class="chat-search-container">
+                <input type="text" class="search-input" id="chat-input" placeholder="Ask me anything...">
+                <div class="chat-controls">
+                    <button class="btn-circle" id="chat-attach-btn" title="Attach PDF" style="margin-right: auto; margin-left:12px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    </button>
+                    
+                    <select id="chat-persona" class="styled-select hidden-mobile">
+                        <option value="Assistant">Assistant</option>
+                        <option value="Teacher">Teacher</option>
+                        <option value="Coder">Coder</option>
+                    </select>
+                    <select id="chat-lang" class="styled-select hidden-mobile">
+                        <option value="English">English</option>
+                        <option value="Spanish">Spanish</option>
+                        <option value="French">French</option>
+                        <option value="German">German</option>
+                    </select>
+                    
+                    <button class="btn-circle" id="chat-mic" title="Microphone" style="border: none;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                    </button>
+
+                    <button class="btn-submit" id="chat-submit" title="Send">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
